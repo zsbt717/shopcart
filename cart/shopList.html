@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<style>
+			*{
+				margin: 0;
+				padding: 0;
+			}
+			.goods{
+				float: left;
+				border: 1px solid #333333;
+				padding: 20px;
+				text-align: center;
+			}
+			p{
+				line-height: 35px;
+			}
+			.btn{
+				display: block;
+				padding: 8px 12px;
+				background-color: #9ACD32;
+				color: #FFFF00;
+				text-align: center;
+				margin: 10px auto;
+				border: none;
+				cursor: pointer;
+			}
+			.cart{
+				position: absolute;
+				right: 40px;
+				top: 20px;
+				width: 40px;
+				padding: 5px 8px;
+				border: 1px solid #000000;
+				text-align: center;
+			}
+		</style>
+		
+	</head>
+	<body>
+		<div id="goodList"></div>
+		<div class="cart">0</div>
+	</body>
+</html>
+<script src="cookie.js" type="text/javascript" charset="utf-8"></script>
+<script src="jquery-1.11.0.js" type="text/javascript" charset="utf-8"></script>
+<script type="text/javascript">
+	$(function(){
+		$.get("shoplist.json",function(data){
+			//console.log(data);
+			var str = "";
+			for(i in data){
+				//console.log(data[i]);
+			
+				str+=`
+				<div class="goods">
+					<figure>
+						<a href="shopxq.html?id=${data[i].id}"><img src="${data[i].imgsrc}" alt="" /></a>
+						<figcaption>
+							<p>${data[i].title}</p>
+							<p>￥<span>${data[i].price}</span></p>
+							<button class="btn" data-id="${data[i].id}">加入购物车</button>
+						</figcaption>
+					</figure>
+				</div>
+				`;
+			}
+			
+			
+			$("#goodList").html(str);
+			var sum = 0;
+			if(getCookie("cart")){
+				obj = JSON.parse(getCookie("cart"));
+			}else{
+				var obj = {};
+			}
+			for(var j in obj){
+					sum+=obj[j];
+			}
+			
+			
+			
+			$(".cart").eq(0).html(sum);
+			
+			
+			$(".btn").click(function(){
+				// 统计购买商品的数量
+				
+				if(getCookie("cart")){
+					obj = JSON.parse(getCookie("cart"));
+				}else{
+					var obj = {};
+				}
+				
+				
+				
+				var oId = $(this).data("id");
+				//console.log(oId);
+				
+				if(!obj[oId]){
+					obj[oId] = 1;
+				}else{
+					obj[oId]++;
+				}
+				
+				var str = JSON.stringify(obj);
+				setCookie("cart",str,7);
+				sum++;
+				$(".cart").eq(0).html(sum);
+			})
+			
+			
+		});
+	});
+</script>

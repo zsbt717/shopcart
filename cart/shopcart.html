@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<style type="text/css">
+			img{
+				width: 100px;
+				height: 60px;
+			}
+			span{
+				margin: 10px;
+				user-select: none;
+			}
+			li{
+				list-style: none;
+			}
+		</style>
+	</head>
+	<body>
+		<ul id="ul-list">
+		
+		</ul>
+		<div >总价：<span id="total"></span></div>
+	</body>
+</html>
+<script src="cookie.js" type="text/javascript" charset="utf-8"></script>
+<script src="jquery-1.11.0.js" type="text/javascript" charset="utf-8"></script>
+<script type="text/javascript">
+	$.get("shoplist.json",function(data){
+		//console.log(data);
+		
+		if(getCookie("cart")){
+			var obj = JSON.parse(getCookie("cart"));
+		}else{
+			var obj = {};
+		}
+		var str = "";
+		for(var i in data){
+			//console.log(obj[i]);
+			str+='<li data-id="'+data[i].id+'"><img src="'+data[i].imgsrc+'"/><span>'+data[i].title+'</span><span>'+data[i].price+'</span><span class="prev">-</span><input type="text" value="'+obj[i]+'"/><span class="next">+</span><span class="del">删除</span></li>';
+		}
+		
+		$("#ul-list").html(str);
+		
+		
+		var aprev = document.getElementsByClassName("prev");
+		var anext = document.getElementsByClassName("next");
+		var oTatal = document.getElementById("total");
+		var atxt = document.getElementsByTagName("input");
+		var aDel = document.getElementsByClassName("del");
+		var oulList = document.getElementById("ul-list");
+		console.log(aprev.length,anext.length,atxt.length,aDel.length);
+		for(var i=0; i<aprev.length; i++){
+			aprev[i].onclick = function(){
+				var oInput = this.nextElementSibling || this.nextSibling;
+				oInput.value--;
+				if(oInput.value<0){
+					oInput.value = 0;
+				}
+				var id = this.parentNode.getAttribute("data-id");
+				obj[id] = oInput.value;
+				//存cookie
+				totalPrice();
+				var str = JSON.stringify(obj);
+				setCookie("cart",str,7);
+				
+			}
+			anext[i].onclick = function(){
+				var oInput = this.previousElementSibling || this.previousSibling;
+				oInput.value++;
+				var id = this.parentNode.getAttribute("data-id");
+				obj[id] = oInput.value;
+				//存cookie
+				totalPrice();
+				var str = JSON.stringify(obj);
+				setCookie("cart",str,7);
+			}
+			aDel[i].onclick = function(){
+				var id = this.parentNode.getAttribute("data-id");
+				oulList.removeChild(this.parentNode);
+				delete obj[id];
+				
+				totalPrice();
+				var str = JSON.stringify(obj);
+				setCookie("cart",str,7);
+			}
+			
+		}
+		
+		function totalPrice(){
+			var sum = 0;
+			for(var i in obj){
+				sum+= obj[i]*data[i].price;
+			}
+			oTatal.innerHTML = sum;
+		}
+		totalPrice();
+		
+		
+	});
+	
+	
+</script>

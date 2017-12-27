@@ -1,0 +1,16 @@
+{
+	
+		"1001":{
+			"id":"1001",
+			"imgsrc":"img/iphone7.jpg",
+			"title":"iphoe7 32g",
+			"price":"4399"
+		},
+		"1002":{
+			"id":"1002",
+			"imgsrc":"img/iphone8p.jpg",
+			"title":"iphoe8 64g",
+			"price":"6699"
+		}
+	
+}

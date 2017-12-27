@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<style type="text/css">
+			a{
+				text-decoration: none;
+				display: inline-block;
+				padding: 3px 5px;
+			}
+			input{
+				margin: 0px -4px;
+			    height: 24px;
+			    width: 30px;
+			    text-align: center;
+			    border: 1px solid #333333;
+			}
+			.shopImg,.prdouct{
+				float: left;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="datial">
+			
+		</div>
+	</body>
+</html>
+<script src="cookie.js" type="text/javascript" charset="utf-8"></script>
+<script src="jquery-1.11.0.js" type="text/javascript" charset="utf-8"></script>
+<script type="text/javascript">
+	
+	// 获取加载路径
+	var str = location.href;
+	//console.log(str);
+	// 获取是哪个id传进来的
+	var oId = str.split("=")[1];
+	//console.log(oId);
+	
+	
+	
+	// 根据id动态的加载页面
+	$.ajax({
+		type:"get",
+		url:"shoplist.json",
+		async:true,
+		success:function(data){
+			//console.log(data);
+			var str = "";
+			str+=`
+				<div class="shopImg">
+				<img src="${data[oId].imgsrc}" alt="" />
+				</div>
+				<div class="prdouct">
+					<p>${data[oId].title}</p>
+					<p>￥<span class="price">${data[oId].price}</span></p>
+					<div>
+						<a href="javascript:;" class="prev">-</a>
+						<input type="text" value="0" id="num"/>
+						<a href="javascript:;" class="next">+</a>
+					</div>
+					<p>
+						<button class="btn">加入购物车</button>
+					</p>
+				</div>
+			`;
+			
+			$("#datial").html(str);
+			var oNum = document.getElementById("num");
+			if(getCookie("cart")){
+				var obj = JSON.parse(getCookie("cart"));
+			}else{
+				var obj = {};
+			}
+			console.log(obj);
+			oNum.value = obj[oId];
+			
+			
+			// 点击加减改变文本框的值
+			$(".next").click(function(){
+				oNum.value++;
+			});
+			$(".prev").click(function(){
+				oNum.value--;
+				if(oNum.value-- < 0){
+					oNum.value = 0;
+				}
+			});
+			
+			// 存cookie
+			
+			$(".btn").click(function(){
+				// 把对应的obj[oId]的值设置为文本框里的值
+				obj[oId] = parseInt(oNum.value);
+				var str = JSON.stringify(obj);
+				setCookie("cart",str,7);
+				location.href="shopcart.html";
+			});
+			
+			
+		}
+	});
+	
+	
+	
+	
+</script>
